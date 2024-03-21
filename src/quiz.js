@@ -1,15 +1,50 @@
 class Quiz {
     // YOUR CODE HERE:
     //
-    // 1. constructor (questions, timeLimit, timeRemaining)
+    constructor(questions, timeLimit, timeRemaining) {
+        this.questions = questions;
+        this.timeLimit = timeLimit;
+        this.timeRemaining = timeRemaining;
+        this.correctAnswers = 0;
+        this.currentQuestionIndex = 0;
+    }
 
-    // 2. getQuestion()
-    
-    // 3. moveToNextQuestion()
+    getQuestion() {
+        return this.questions[this.currentQuestionIndex];
+    }
 
-    // 4. shuffleQuestions()
+    moveToNextQuestion() {
+        this.currentQuestionIndex += 1
+    }
 
-    // 5. checkAnswer(answer)
+    shuffleQuestions() {
+        let endPointer = this.questions.length - 1;
+        let randomIndex;
+        while (endPointer > 0) {
+            randomIndex = Math.floor(Math.random() * endPointer);
+            [this.questions[randomIndex], this.questions[endPointer]] = [this.questions[endPointer], this.questions[randomIndex]];
+            endPointer--;
+        }
+    }
 
-    // 6. hasEnded()
+    checkAnswer(answer) {
+        if (answer === this.questions[this.currentQuestionIndex].answer)
+            this.correctAnswers += 1;
+    }
+
+    hasEnded() {
+        return this.currentQuestionIndex >= this.questions.length ? true : false;
+    }
+
+    filterQuestionsByDifficulty(difficulty) {
+        if (typeof difficulty === "number" && difficulty > 0 && difficulty <= 3)
+            this.questions = this.questions.filter(question => question.difficulty === difficulty);
+    }
+
+    averageDifficulty() {
+        const difficultyAverage = this.questions.reduce(function (accumulator, currentValue) {
+            return accumulator + currentValue.difficulty;
+        }, 0) / this.questions.length;
+        return difficultyAverage;
+    };
 }
