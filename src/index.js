@@ -45,21 +45,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /************  SHOW INITIAL CONTENT  ************/
 
-  // Convert the time remaining in seconds to minutes and seconds, and pad the numbers with zeros if needed
-  const minutes = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
-  const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
-
-  // Display the time remaining in the time remaining container
-  const timeRemainingContainer = document.getElementById("timeRemaining");
-  timeRemainingContainer.innerText = `${minutes}:${seconds}`;
-
   // Show first question
   showQuestion();
 
-
   /************  TIMER  ************/
-
   let timer;
+  showRemainingTime();
+
+  function showRemainingTime() {
+    timer = setInterval(() => {
+
+      // Convert the time remaining in seconds to minutes and seconds, and pad the numbers with zeros if needed
+      const minutes = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
+      const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+
+      // Display the time remaining in the time remaining container
+      document.querySelector("#timeRemaining").innerText = `${minutes}:${seconds}`;
+
+      if (quiz.timeRemaining === 0) {
+        showResults()
+        clearInterval(timer);
+      }
+      else
+        quiz.timeRemaining -= 1;
+
+    }, 1000);
+  }
 
 
   /************  EVENT LISTENERS  ************/
@@ -134,6 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
       radioButton.value = currentChoice;
       const radioOptionText = document.createElement("lable");
       radioOptionText.innerText = currentChoice;
+      radioOptionText.classList.add("radioButtonText");
       choiceContainer.appendChild(radioButton);
       choiceContainer.appendChild(radioOptionText);
     });
@@ -184,6 +196,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 3. Update the result container (div#result) inner text to show the number of correct answers out of total questions
     resultContainer.innerText = `You scored ${quiz.correctAnswers} out of ${questions.length} correct answers!`; // This value is hardcoded as a placeholder
+
+    if (timer)
+      clearInterval(timer);
   }
 
   function restartButtonHandler() {
@@ -194,6 +209,8 @@ document.addEventListener("DOMContentLoaded", () => {
     quiz.currentQuestionIndex = 0;
     quiz.shuffleQuestions();
     showQuestion();
+    quiz.timeRemaining = quizDuration;
+    showRemainingTime()
   }
 
 });
